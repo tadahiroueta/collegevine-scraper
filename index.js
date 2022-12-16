@@ -52,7 +52,6 @@ const option = argv.argv.s;
     }
     else data = await getCollegesData([ option.replace('-', ' ') ]);
     
-    fs.writeFileSync('data/output.json', JSON.stringify(data));
     fs.writeFileSync('data/output.csv', toCSV(data));
     process.exit()
 })()
