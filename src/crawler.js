@@ -27,7 +27,7 @@ const SELECTORS = {
  * 
  * @return {Promise<Browser>} puppeteer browser
  */
-const getBrowser = async () => await launch({ headless: false })
+const getBrowser = async () => await launch()
 
 /**
  * Crawls into collegevine.com account and scrapes data about college
