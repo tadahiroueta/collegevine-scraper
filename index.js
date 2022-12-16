@@ -1,5 +1,6 @@
-const { getCollegeData } = require('./crawler');
+const crawler = require('./src/crawler');
 const fs = require('fs');
+const yargs = require('yargs/yargs');
 
 /**
  * Gets data from multiple colleges
@@ -7,8 +8,9 @@ const fs = require('fs');
  * @param {string[]} colleges - Array of college names matching the collegevine.com's
  * @returns {Promise<Object[]>} - Array of objects containing college data
  */
-const getCollegesData = async (college) => {
-    return await Promise.all(colleges.map(async (college) => getCollegeData(college)));
+const getCollegesData = async (colleges) => {
+    const browser = await crawler.getBrowser();
+    return await Promise.all(colleges.map(async (college) => crawler.getCollegeData(college, browser)));
 }
 
 
@@ -23,15 +25,34 @@ const toCSV = (data) => {
     const csv = [keys.join(',')];
 
     data.forEach((row) => {
-        const values = keys.map((key) => row[key]);
+        const values = keys.map((key) => `"${row[key]}"`);
         csv.push(values.join(','));
     });
 
     return csv.join('\n');
 }
 
+
+// CLI commands and options
+const argv = yargs(process.argv.slice(2))
+    .usage('Usage: $0 <command> [options]')
+    .command('scrape', 'scrape [options]')
+    .example('$0 scrape Stanford-University', 'Scrapes data for Stanford University')
+    .example('$0 scrape input', 'Scrapes data from input.txt')
+    .alias('s', 'scrape')
+    .demandOption(['s']);
+
+const option = argv.argv.s;
+
 (async () => {
-    const colleges = fs.readFileSync('input.txt', 'utf8').split('\n')
-    const data = await getCollegesData(colleges);
-    fs.writeFileSync('output.csv', toCSV(data));
-})
+    let data
+    if (option === 'input') {
+        const colleges = fs.readFileSync('data/input.txt', 'utf8').split('\r\n')
+        data = await getCollegesData(colleges);
+    }
+    else data = await getCollegesData([ option.replace('-', ' ') ]);
+    
+    fs.writeFileSync('data/output.json', JSON.stringify(data));
+    fs.writeFileSync('data/output.csv', toCSV(data));
+    process.exit()
+})()
