@@ -44,30 +44,35 @@ const getCollegeData = async (name, browser) => {
     await page.click(SELECTORS.SEARCH, WAIT_OPTIONS)
     await page.keyboard.type(name)
     await page.keyboard.press("Enter", WAIT_OPTIONS)
+    
+    let data
+    try {
+        data = { 
+            name,
+            isInstitute: name.includes("Institute"),
+            ...await page.evaluate((SELECTORS, SIGNS) => { 
+                /**
+                 * Removes signs from numbers, but leaves text alone
+                 * 
+                 * @param {string} string - string to remove signs from
+                 * @return {string} string without signs
+                 */
+                const clean = string => {
+                    for (const sign of SIGNS) string = string.replace(sign, "")
+                    return string
+                }
 
-    const data = { 
-        name,
-        isInstitute: name.includes("Institute"),
-        ...await page.evaluate((SELECTORS, SIGNS) => { 
-            /**
-             * Removes signs from numbers, but leaves text alone
-             * 
-             * @param {string} string - string to remove signs from
-             * @return {string} string without signs
-             */
-            const clean = string => {
-                for (const sign of SIGNS) string = string.replace(sign, "")
-                return string
-            }
+                const data = { ...SELECTORS.PAGE_SELECTORS }
+                for (const key of Object.keys(data)) data[key] = clean(document.querySelector(data[key]).innerText)
 
-            const data = { ...SELECTORS.PAGE_SELECTORS }
-            for (const key of Object.keys(data)) data[key] = clean(document.querySelector(data[key]).innerText)
+                data.state = data.state.split(" ").find(word => word.length === 2 && word == word.toUpperCase()).substring(0, 2) // looks for a two letter word that is all caps
+                data.cost = clean(document.querySelector(data.state === "TX" ? SELECTORS.IN_STATE_COST : SELECTORS.OUT_STATE_COST).innerText) // gets cost based on state
 
-            data.state = data.state.split(" ").find(word => word.length === 2 && word == word.toUpperCase()).substring(0, 2) // looks for a two letter word that is all caps
-            data.cost = clean(document.querySelector(data.state === "TX" ? SELECTORS.IN_STATE_COST : SELECTORS.OUT_STATE_COST).innerText) // gets cost based on state
-
-            return data
-        }, SELECTORS, SIGNS)
+                return data
+            }, SELECTORS, SIGNS)
+    }}
+    catch (error) {
+        console.log("Invalid uni name.")
     }
     page.close()
     return data

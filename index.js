@@ -1,6 +1,7 @@
 const crawler = require('./src/crawler');
 const fs = require('fs');
 const yargs = require('yargs/yargs');
+const cliProgress = require('cli-progress');
 
 /**
  * Gets data from multiple colleges
@@ -9,8 +10,17 @@ const yargs = require('yargs/yargs');
  * @returns {Promise<Object[]>} - Array of objects containing college data
  */
 const getCollegesData = async (colleges) => {
+    // progress bar
+    const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    bar.start(colleges.length, 0);
+
     const browser = await crawler.getBrowser();
-    return await Promise.all(colleges.map(async (college) => crawler.getCollegeData(college, browser)));
+    data = []
+    for (const college of colleges) {
+        data.push(await crawler.getCollegeData(college, browser))
+        bar.increment()
+    }
+    return data
 }
 
 
