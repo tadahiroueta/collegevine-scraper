@@ -15,12 +15,13 @@ const getCollegesData = async (colleges) => {
     bar.start(colleges.length, 0);
 
     const browser = await crawler.getBrowser();
-    data = []
+    let collegesData = []
     for (const college of colleges) {
-        data.push(await crawler.getCollegeData(college, browser))
+        collegeData = await crawler.getCollegeData(college, browser)
+        if (collegeData) collegesData.push(collegeData) // if collegeData is null, then the college name was invalid
         bar.increment()
     }
-    return data
+    return collegesData
 }
 
 
@@ -61,7 +62,7 @@ const option = argv.argv.s;
         data = await getCollegesData(colleges);
     }
     else data = await getCollegesData([ option.replaceAll('-', ' ') ]);
-    
+
     fs.writeFileSync('data/output.csv', toCSV(data));
     process.exit()
 })()
