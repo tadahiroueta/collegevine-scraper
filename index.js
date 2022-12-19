@@ -61,7 +61,7 @@ const option = argv.argv.s;
         const colleges = fs.readFileSync('data/input.txt', 'utf8').split('\r\n')
         data = await getCollegesData(colleges);
     }
-    else data = await getCollegesData([ option.replaceAll('-', ' ') ]);
+    else data = await getCollegesData([ option ]);
 
     fs.writeFileSync('data/output.csv', toCSV(data));
     process.exit()

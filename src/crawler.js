@@ -42,7 +42,7 @@ const getCollegeData = async (name, browser) => {
     await page.goto(EXPLORE_URL, WAIT_OPTIONS)
 
     await page.click(SELECTORS.SEARCH, WAIT_OPTIONS)
-    await page.keyboard.type(name)
+    await page.keyboard.type(name, WAIT_OPTIONS)
     await page.keyboard.press("Enter", WAIT_OPTIONS)
     
     let data
@@ -63,7 +63,14 @@ const getCollegeData = async (name, browser) => {
                 }
 
                 const data = { ...SELECTORS.PAGE_SELECTORS }
-                for (const key of Object.keys(data)) data[key] = clean(document.querySelector(data[key]).innerText)
+                for (const key of Object.keys(data)) {
+                    try {
+                        data[key] = clean(document.querySelector(data[key]).innerText)
+                    }
+                    catch (error) {
+                        delete data[key]
+                    }
+                }
 
                 data.state = data.state.split(" ").find(word => word.length === 2 && word == word.toUpperCase()).substring(0, 2) // looks for a two letter word that is all caps
                 data.cost = clean(document.querySelector(data.state === "TX" ? SELECTORS.IN_STATE_COST : SELECTORS.OUT_STATE_COST).innerText) // gets cost based on state
