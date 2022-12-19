@@ -3,6 +3,21 @@ const fs = require('fs');
 const yargs = require('yargs/yargs');
 const cliProgress = require('cli-progress');
 
+const KEYS = [
+    "name",
+    "rank",
+    "isInstitute",
+    "size",
+    "setting",
+    "state",
+    "region",
+    "cost",
+    "yield",
+    "collegeVineChances",
+    "acceptance",
+    "difficulty"
+]
+
 /**
  * Gets data from multiple colleges
  * 
@@ -32,11 +47,10 @@ const getCollegesData = async (colleges) => {
  * @returns {string} - CSV string
  */
 const toCSV = (data) => {
-    const keys = Object.keys(data[0]);
-    const csv = [keys.join(',')];
+    const csv = [ KEYS.join(',') ];
 
     data.forEach((row) => {
-        const values = keys.map((key) => `"${row[key]}"`);
+        const values = KEYS.map((key) => `"${row[key]}"`);
         csv.push(values.join(','));
     });
 
