@@ -75,7 +75,10 @@ const option = argv.argv.s;
         const colleges = fs.readFileSync('data/input.txt', 'utf8').split('\r\n')
         data = await getCollegesData(colleges);
     }
-    else data = await getCollegesData([ option ]);
+    else {
+        data = await getCollegesData([ option ]);
+        console.log(data)
+    }
 
     fs.writeFileSync('data/output.csv', toCSV(data));
     process.exit()

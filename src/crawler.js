@@ -4,7 +4,7 @@ const cookies = require('../data/cookies.json');
 
 
 const EXPLORE_URL = "https://www.collegevine.com/schools/hub/all"
-const SIGNS = ["$", ",", "%"]
+const SIGNS = ["$", ",", "%", "\n"]
 const WAIT_OPTIONS = { waitUntil: 'networkidle2', timeout: 0 }
 const SELECTORS = { 
     SEARCH: "#react-select-2-input", 
@@ -18,7 +18,8 @@ const SELECTORS = {
         yield: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--admission-stats > div.card-body > div > div:nth-child(2) > div.d-flex.align-items-baseline.mb-4 > div.large.font-weight-bold.fw-bold.mr-1",
         collegeVineChances: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--chancing > div > div.row.align-items-center.mb-3 > div:nth-child(1) > div > div.col-6.order-1.order-lg-2.my-auto > h3",
         acceptance: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--chancing > div > div.row.align-items-center.mb-3 > div.col-12.col-lg-6.py-3.my-auto > h3",
-        state: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-4 > div.card.t--location > div > div.row.mb-4 > div.col.pl-0 > div:nth-child(2)"
+        state: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-4 > div.card.t--location > div > div.row.mb-4 > div.col.pl-0 > div:nth-child(2)",
+        difficulty: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--chancing > div > h2"
     }
 }
 
@@ -39,7 +40,8 @@ const getBrowser = async () => await launch()
 const getCollegeData = async (name, browser) => {
     const page = await browser.newPage()
     await page.setCookie(...cookies)
-    await page.goto(EXPLORE_URL, WAIT_OPTIONS)
+    await page.goto(EXPLORE_URL)
+    await page.waitForSelector(SELECTORS.SEARCH) // the page may be loading, but at least the search bar will load
 
     await page.click(SELECTORS.SEARCH, WAIT_OPTIONS)
     await page.keyboard.type(name, WAIT_OPTIONS)
@@ -50,15 +52,22 @@ const getCollegeData = async (name, browser) => {
         data = { 
             name,
             isInstitute: name.includes("Institute"),
-            ...await page.evaluate((SELECTORS, SIGNS) => { 
+            ...await page.evaluate((SELECTORS, SIGNS) => {
                 /**
-                 * Removes signs from numbers, but leaves text alone
+                 * Removes signs from numbers, but leaves text alone. Also turns percentages to decimals.
                  * 
                  * @param {string} string - string to remove signs from
                  * @return {string} string without signs
                  */
                 const clean = string => {
+                    // remove unwanted characters
                     for (const sign of SIGNS) string = string.replace(sign, "")
+                    
+                    // for percentages
+                    if (!isNaN(string)) {
+                        const number = parseInt(string)
+                        if (number <= 100) string = (number / 100).toString()
+                    }
                     return string
                 }
 
@@ -75,11 +84,18 @@ const getCollegeData = async (name, browser) => {
                 data.state = data.state.split(" ").find(word => word.length === 2 && word == word.toUpperCase()).substring(0, 2) // looks for a two letter word that is all caps
                 data.cost = clean(document.querySelector(data.state === "TX" ? SELECTORS.IN_STATE_COST : SELECTORS.OUT_STATE_COST).innerText) // gets cost based on state
 
+                if (data.difficulty) {
+                    const split = data.difficulty.split(" ")
+                    data.difficulty = split[split.indexOf("a") + 1]
+                    if (data.difficulty === "Hard") data.difficulty = "Hard Target"
+                }
+
                 return data
             }, SELECTORS, SIGNS)
     }}
     catch (error) {
-        console.log("Invalid uni name.")
+        throw error
+        console.log(`${name} is an invalid uni name.`)
     }
     page.close()
     return data
