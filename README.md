@@ -9,7 +9,8 @@ INSTALMENT
 * Cookies
     * Sign in to collegevine.com
     * Enter personal information to your profile to get your personal chances of being accepted into certain colleges
-    * Download JSON cookies file to ``` data/ ``` folder (I recommend using [Export cookie JSON file for Puppeteer](https://chrome.google.com/webstore/detail/%E3%82%AF%E3%83%83%E3%82%AD%E3%83%BCjson%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%87%BA%E5%8A%9B-for-puppet/nmckokihipjgplolmcmjakknndddifde?hl=en) Chrome extension)
+    * Create a ``` data ``` folder
+    * Download JSON cookies file to ``` data ``` folder (I recommend using [Export cookie JSON file for Puppeteer](https://chrome.google.com/webstore/detail/%E3%82%AF%E3%83%83%E3%82%AD%E3%83%BCjson%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%87%BA%E5%8A%9B-for-puppet/nmckokihipjgplolmcmjakknndddifde?hl=en) Chrome extension)
     * Hold a solid internet connection
 
 
