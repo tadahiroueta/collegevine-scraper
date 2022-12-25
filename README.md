@@ -23,3 +23,8 @@ Single university:
 Multiple universities:
     Add a ``` input.txt ``` file to the ``` data ``` folder with a university name on each line (with no empty lines).
     At the terminal execute ``` node index --scrape input ```
+    
+OUTPUT
+------
+
+Outputs a CSV file on the ``` data ``` folder, which can be exported to Google Sheets as it was intended
