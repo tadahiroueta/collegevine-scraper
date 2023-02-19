@@ -92,7 +92,6 @@ const getCollegeData = async (name, browser) => {
             }, SELECTORS, SIGNS)
     }}
     catch (error) {
-        throw error
         console.log(`${name} is an invalid uni name.`)
     }
     page.close()
