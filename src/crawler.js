@@ -7,7 +7,7 @@ const EXPLORE_URL = "https://www.collegevine.com/schools/hub/all"
 const SIGNS = ["$", ",", "%", "\n", "/ year *"]
 const WAIT_OPTIONS = { waitUntil: 'networkidle2', timeout: 0 }
 const SELECTORS = { 
-    SEARCH: "#react-select-2-input", 
+    SEARCH: ".t--name-search__value-container.css-1hwfws3", 
 
     PAGE_SELECTORS: {
         size: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--overview > div > strong:nth-child(3)",
