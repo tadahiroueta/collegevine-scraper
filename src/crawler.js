@@ -16,7 +16,7 @@ const SELECTORS = {
         yield: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--admission-stats > div.card-body > div > div:nth-child(2) > div.d-flex.align-items-baseline.mb-4 > div.large.font-weight-bold.fw-bold.mr-1",
         collegeVineChances: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--chancing > div > div.row.align-items-center.mb-3 > div:nth-child(1) > div > div.col-6.order-1.order-lg-2.my-auto > h3",
         acceptance: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--chancing > div > div.row.align-items-center.mb-3 > div.col-12.col-lg-6.py-3.my-auto > h3",
-        state: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-4 > div.card.t--location > div > div.row.mb-4 > div.col.pl-0 > div:nth-child(2)",
+        state: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-4 > div.card.t--contact-info > div > div:nth-child(2) > div.col.pl-0 > div:nth-child(2)",
         difficulty: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--chancing > div > h2",
         cost: "div > div > div > div:nth-child(1) > div > div > div > div.mx-auto > div.flex-grow-1.min-height-0.overflow-y-auto.overflow-x-hidden.px-3.pt-4.bg-very-light-grey > div > div.col-12.col-md-8 > div.card.t--financials-personal-estimate > div > div.large.font-weight-bold.fw-bold"
 }}
@@ -92,7 +92,7 @@ const getCollegeData = async (name, browser) => {
             }, SELECTORS, SIGNS)
     }}
     catch (error) {
-        console.log(`${name} is an invalid uni name.`)
+        console.log(`${name} is an invalid uni name. (or other error)`)
     }
     page.close()
     return data
