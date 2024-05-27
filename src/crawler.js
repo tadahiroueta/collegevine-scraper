@@ -10,15 +10,15 @@ const SELECTORS = {
     SEARCH: ".t--name-search__value-container.css-1hwfws3", 
 
     PAGE_SELECTORS: {
-        size: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--overview > div > strong:nth-child(3)",
-        setting: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-4 > div.card.t--location > div > div.row.align-items-end > div:nth-child(3) > strong",
-        region: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-4 > div.card.t--location > div > div.row.align-items-center > div.col-auto > strong",
-        yield: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--admission-stats > div.card-body > div > div:nth-child(2) > div.d-flex.align-items-baseline.mb-4 > div.large.font-weight-bold.fw-bold.mr-1",
-        collegeVineChances: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--chancing > div > div.row.align-items-center.mb-3 > div:nth-child(1) > div > div.col-6.order-1.order-lg-2.my-auto > h3 > span.mr-1",
-        acceptance: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--chancing > div > div.row.align-items-center.mb-3 > div.col-12.col-lg-6.py-3.my-auto > h3",
-        state: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-4 > div.card.t--contact-info > div > div:nth-child(2) > div.col.pl-0 > div:nth-child(2)",
-        difficulty: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--chancing > div > h2",
-        cost: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.z-index-modal.bg-very-light-grey.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--financials-personal-estimate > div > div.large.font-weight-bold.fw-bold"
+        size: "div > div > div.d-flex.flex-column.position-absolute-fullsize.overflow-y-auto.overflow-x-hidden.z-index-modal.bg-white.t--focused-school > div > div.row > div.col-12.col-md-8 > div.card.t--overview > div > div.my-3 > strong:nth-child(3)",
+        setting: "div.row > div.col-12.col-md-8 > div.card.t--overview > div > div.my-4 > div:nth-child(1)",
+        region: "div.row > div.col-12.col-md-8 > div.card.t--overview > div > div.my-4 > div:nth-child(2)",
+        yield: "div.row > div.col-12.col-md-8 > div.card.t--admission-stats > div > div:nth-child(2) > div:nth-child(2) > div.x-large.mr-1",
+        collegeVineChances: "div.row > div.col-12.col-md-8 > div:nth-child(2) > div > div > div.row.align-items-center.mb-3 > div:nth-child(1) > div > div.col-6.order-1.order-lg-2.my-auto > h3 > span.mr-1",
+        acceptance: "div.row > div.col-12.col-md-8 > div:nth-child(2) > div > div > div.row.align-items-center.mb-3 > div.col-12.col-lg-6.py-3.my-auto > h3",
+        state: "div.row > div.col-12.col-md-8 > div.card.t--overview > div > div:nth-child(5) > div.col.pl-0 > div",
+        difficulty: "div.row > div.col-12.col-md-8 > div:nth-child(2) > div > div > h2:nth-child(3)",
+        cost: "div.row > div.col-12.col-md-8 > div.card.t--financials-personal-estimate > div > div"
 }}
 
 /**
@@ -26,7 +26,7 @@ const SELECTORS = {
  * 
  * @return {Promise<Browser>} puppeteer browser
  */
-const getBrowser = async () => await launch()
+const getBrowser = async () => await launch({ headless: "new" })
 
 /**
  * Crawls into collegevine.com account and scrapes data about college
@@ -79,7 +79,8 @@ const getCollegeData = async (name, browser) => {
                     }
                 }
 
-                data.state = data.state.split(" ").find(word => word.length === 2 && word == word.toUpperCase()).substring(0, 2) // looks for a two letter word that is all caps
+                if (data.state) 
+                    data.state = data.state.split(" ").find(word => word.length === 2 && word == word.toUpperCase()).substring(0, 2) // looks for a two letter word that is all caps
                 // data.cost = clean(document.querySelector(data.state === "TX" ? SELECTORS.IN_STATE_COST : SELECTORS.OUT_STATE_COST).innerText) // gets cost based on state
 
                 if (data.difficulty) {
@@ -91,10 +92,7 @@ const getCollegeData = async (name, browser) => {
                 return data
             }, SELECTORS, SIGNS)
     }}
-    catch (error) {
-        console.log(`${name} is an invalid uni name. (or other error)`)
-    }
-    page.close()
+    catch (error) { console.log(`${name} is an invalid uni name. (or other error)`) }
     return data
 }
 
