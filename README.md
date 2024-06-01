@@ -21,7 +21,9 @@ The scraping is done with [Puppeteer](https://pptr.dev/) that opens a headless b
 
 Implemented CLI-Progress' single bar to track progress with scraping and estimate how long it will take
 
-<img src="https://github.com/tadahiroueta/collegevine-scraper/blob/master/samples/progress-bar.png" alt="progress-bar" width="50%" />
+<br>
+<img src="https://github.com/tadahiroueta/collegevine-scraper/blob/master/samples/progress-bar.png" alt="progress-bar" width="376rem" />
+<br>
 
 ### Compatible with spreadsheets
 
